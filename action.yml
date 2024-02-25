@@ -35,18 +35,18 @@ runs:
   using: composite
   steps:
   - name: Add msbuild to PATH
-    uses: microsoft/setup-msbuild@v1.1
+    uses: microsoft/setup-msbuild@v2
   - name: Update PowerShell Archive Version
     shell: powershell
     run: Install-Module Microsoft.PowerShell.Archive -MinimumVersion 1.2.3.0 -Repository PSGallery -Force
   - name: Checkout OCB-CS2 compile helpers
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
     with:
       path: 'OCB-CS2-CM'
       repository: OCB-CS2/OcbModCompiler
       ref: main
   - name: Checkout CS2 dependencies (private repo)
-    uses: actions/checkout@v3
+    uses: actions/checkout@v4
     with:
       path: OCB-CS2-CI
       repository: OCB-CS2/OCB-CS2-CI
