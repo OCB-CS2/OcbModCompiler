@@ -1,0 +1,73 @@
+name: 'OCB CS2 shared github action'
+author: 'Marcel Greter'
+description: 'Compile City Skylines 2 modules (and releases)'
+
+inputs:
+  name:
+    required: true
+    type: string
+  token:
+    required: true
+  OCBTOKEN:
+    required: true
+  release:
+    required: false
+    default: 'false'
+    type: boolean
+  version:
+    required: false
+    default: 'snapshot'
+    type: string
+  cs2tag:
+    required: false
+    default: '1.0.19f1'
+    type: string
+  prerelease:
+    required: false
+    default: 'false'
+    type: boolean
+  draft:
+    required: false
+    default: 'true'
+    type: boolean
+
+runs:
+  using: composite
+  steps:
+  - name: Add msbuild to PATH
+    uses: microsoft/setup-msbuild@v1.1
+  - name: Update PowerShell Archive Version
+    shell: powershell
+    run: Install-Module Microsoft.PowerShell.Archive -MinimumVersion 1.2.3.0 -Repository PSGallery -Force
+  - name: Checkout OCB-CS2 compile helpers
+    uses: actions/checkout@v3
+    with:
+      path: 'OCB-CS2-CM'
+      repository: OCB-CS2/OcbModCompiler
+      ref: main
+  - name: Checkout CS2 dependencies (private repo)
+    uses: actions/checkout@v3
+    with:
+      path: OCB-CS2-CI
+      repository: OCB-CS2/OCB-CS2-CI
+      token: ${{ inputs.OCBTOKEN }}
+  - name: Call OCB-CS2 module compiler
+    shell: cmd
+    run: |
+      set PATH_CS2_MANAGED=OCB-CS2-CI\${{ inputs.cs2tag }}\Managed
+      set PATH=%PATH%;OCB-CS2-CM\utils
+      00-CompileModule.bat
+  - name: Create release archive
+    shell: cmd
+    run:
+      01-CreateRelease.bat ${{ inputs.version }}
+  - name: Create github release
+    if: ${{ inputs.release == 'true' }}
+    uses: "marvinpinto/action-automatic-releases@v1.2.1"
+    with:
+      repo_token: ${{ inputs.token }}
+      prerelease: ${{ inputs.prerelease }}
+      draft: ${{ inputs.draft }}
+      files: |
+        ./build/*.zip
+    id: "automatic_releases"
