@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <WorkingDirectory>$(MSBuildThisFileDirectory)bin\$(Configuration)\$(TargetFramework)</WorkingDirectory>
+        <PublishTrimmed>true</PublishTrimmed>
+        <PublishReadyToRun>true</PublishReadyToRun>
+        <PublishSingleFile>false</PublishSingleFile>
+        <PackAsTool>true</PackAsTool>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Reference Include="Mono.Cecil">
+        <HintPath>$(PATH_CS2_MANAGED)\..\..\BepInEx\core\Mono.Cecil.dll</HintPath>
+      </Reference>
+    </ItemGroup>
+
+</Project>
